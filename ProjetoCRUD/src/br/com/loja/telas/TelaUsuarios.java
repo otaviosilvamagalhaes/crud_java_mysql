@@ -52,6 +52,10 @@ public class TelaUsuarios extends javax.swing.JInternalFrame {
             String captura_senha = new String(txtSenha.getText());
             pst.setString(5, txtSenha.getText());
             pst.setString(6, comboPerfil.getSelectedItem().toString());
+            if (txtId.getText().isEmpty() || txtNome.getText().isEmpty() || txtFone.getText().isEmpty() ||
+                    txtLogin.getText().isEmpty() || txtSenha.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatórios!");
+            } else {
             int adicionado = pst.executeUpdate();
             if (adicionado>0){
                 JOptionPane.showMessageDialog(null, "Usuário adicionado com sucesso");
@@ -60,6 +64,7 @@ public class TelaUsuarios extends javax.swing.JInternalFrame {
                 txtFone.setText(null);
                 txtLogin.setText(null);
                 txtSenha.setText(null);
+            }
             }
             
         } catch (Exception e) {
