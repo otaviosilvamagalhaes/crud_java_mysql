@@ -39,6 +39,7 @@ public class TelaUsuarios extends javax.swing.JInternalFrame {
     } catch (Exception e){
         JOptionPane.showMessageDialog(null, e);
     }
+    }
         
     private void adicionar(){
         String sql = "INSERT INTO usuarios (iduser,usuario,fone,login,senha,perfil) VALUES (?,?,?,?,?,?)";
@@ -48,25 +49,77 @@ public class TelaUsuarios extends javax.swing.JInternalFrame {
             pst.setString(2, txtNome.getText());
             pst.setString(3, txtFone.getText());
             pst.setString(4, txtLogin.getText());
-            String captura_senha = new String(txtSenha.getPassword());
+            String captura_senha = new String(txtSenha.getText());
             pst.setString(5, txtSenha.getText());
             pst.setString(6, comboPerfil.getSelectedItem().toString());
             int adicionado = pst.executeUpdate();
             if (adicionado>0){
-                JOptionPane.ShowMessageDialog(null, "Usuário adicionado com sucesso");
+                JOptionPane.showMessageDialog(null, "Usuário adicionado com sucesso");
                 txtId.setText(null);
                 txtNome.setText(null);
                 txtFone.setText(null);
                 txtLogin.setText(null);
                 txtSenha.setText(null);
-                comboPerfil.setSelectedItem(null);
             }
             
         } catch (Exception e) {
-            JOptionPane.ShowMessageDialog(null, e);
+            JOptionPane.showMessageDialog(null, e);
         }
     }
-
+    
+    private void alterar(){
+        String sql = "Update usuarios set usuario=?, fone=, login=?, senha=?."
+                + "perfil=?, WHERE iduser=?";
+        try{
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtNome.getText());
+            pst.setString(2, txtFone.getText());
+            pst.setString(3, txtLogin.getText());
+            String captura_senha = new String(txtSenha.getText());
+            pst.setString(4, captura_senha);
+            pst.setString(5, comboPerfil.getSelectedItem().toString());
+            pst.setString(6, txtId.getText());
+            if (txtId.getText().isEmpty() || txtNome.getText().isEmpty() || txtFone.getText().isEmpty() ||
+                    txtLogin.getText().isEmpty() || txtSenha.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatórios!");
+            } else {
+                int adicionado = pst.executeUpdate();
+                if (adicionado>0){
+                    JOptionPane.showMessageDialog(null, "Dados do usuários alterado com sucesso!");
+                    txtId.setText(null);
+                    txtNome.setText(null);
+                    txtFone.setText(null);
+                    txtLogin.setText(null);
+                    txtSenha.setText(null);
+                }
+            }
+        } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+    }
+    
+    private void remover(){
+        int confirma = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja remover este usuário?",
+                "Atenção", JOptionPane.YES_NO_OPTION);
+        if (confirma == JOptionPane.YES_OPTION){
+            String sql = "DELETE FROM usuarios WHERE iduser=?";
+            try {
+                pst = conexao.prepareStatement(sql);
+                pst.setString(1, txtId.getText());
+                int apagado = pst.executeUpdate();
+                if (apagado > 0){
+                    JOptionPane.showMessageDialog(null, "Usuário removido com sucesso!");
+                    txtId.setText(null);
+                    txtNome.setText(null);
+                    txtFone.setText(null);
+                    txtLogin.setText(null);
+                    txtSenha.setText(null);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+    }
   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -112,7 +165,7 @@ public class TelaUsuarios extends javax.swing.JInternalFrame {
             }
         });
 
-        comboPerfil.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "User" }));
+        comboPerfil.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "admin", "user" }));
         comboPerfil.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboPerfilActionPerformed(evt);
@@ -139,10 +192,20 @@ public class TelaUsuarios extends javax.swing.JInternalFrame {
         btnAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/loja/icones/update.png"))); // NOI18N
         btnAlterar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnAlterar.setPreferredSize(new java.awt.Dimension(80, 80));
+        btnAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlterarActionPerformed(evt);
+            }
+        });
 
         btnApagar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/loja/icones/delete.png"))); // NOI18N
         btnApagar.setToolTipText("");
         btnApagar.setPreferredSize(new java.awt.Dimension(80, 80));
+        btnApagar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnApagarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -186,11 +249,9 @@ public class TelaUsuarios extends javax.swing.JInternalFrame {
                                         .addComponent(lblFone)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(txtSenha)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(comboPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(90, 90, 90))
-                                    .addComponent(txtFone, javax.swing.GroupLayout.Alignment.LEADING))))))
+                                    .addComponent(txtSenha, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
+                                    .addComponent(txtFone, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(comboPerfil, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                 .addContainerGap(54, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -214,7 +275,7 @@ public class TelaUsuarios extends javax.swing.JInternalFrame {
                     .addComponent(txtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblLogin))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnAdicionar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -248,6 +309,14 @@ public class TelaUsuarios extends javax.swing.JInternalFrame {
         adicionar();
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
+    private void btnApagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApagarActionPerformed
+        remover();
+    }//GEN-LAST:event_btnApagarActionPerformed
+
+    private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
+        alterar();
+    }//GEN-LAST:event_btnAlterarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionar;
@@ -267,5 +336,4 @@ public class TelaUsuarios extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextField txtSenha;
     // End of variables declaration//GEN-END:variables
-}
 }
