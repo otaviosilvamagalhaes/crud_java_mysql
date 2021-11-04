@@ -9,7 +9,7 @@ public class ModuloConexao {
         //Driver
         String driver = "com.mysql.jdbc.Driver";
         //Informações
-        String url = "jdbc:mysql://localhost:3306/lojaetec";
+        String url = "jdbc:mysql://localhost:3306/bdlojaetec";
         String user = "root";
         String password = "";
         
