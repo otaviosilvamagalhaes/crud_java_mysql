@@ -15,6 +15,9 @@
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
   </SyntheticProperties>
+  <Events>
+    <EventHandler event="internalFrameOpened" listener="javax.swing.event.InternalFrameListener" parameters="javax.swing.event.InternalFrameEvent" handler="formInternalFrameOpened"/>
+  </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -67,7 +70,7 @@
                               <Component id="btnOsImprimir" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="txtOsEquip" max="32767" attributes="0"/>
+                              <Component id="txtOsEquipamento" max="32767" attributes="0"/>
                               <Component id="txtOsDef" max="32767" attributes="0"/>
                               <Component id="txtOsServ" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
@@ -102,7 +105,7 @@
               <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="lblEquipamento" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtOsEquip" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtOsEquipamento" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -124,7 +127,7 @@
                   <Component id="txtOsValor" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
+              <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="btnOsAdicionar" alignment="1" min="-2" max="-2" attributes="0"/>
                   <Component id="btnOsPesquisar" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="btnOsAlterar" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -229,6 +232,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Ordem de Servi&#xe7;o"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rbtOsActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -311,6 +317,7 @@
         <Component class="javax.swing.JTextField" name="txtCliPesquisar">
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtCliPesquisarActionPerformed"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtCliPesquisarKeyReleased"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lblId">
@@ -360,6 +367,9 @@
                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblClientesMouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -377,7 +387,7 @@
         <Property name="text" type="java.lang.String" value="*Equipamento"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtOsEquip">
+    <Component class="javax.swing.JTextField" name="txtOsEquipamento">
     </Component>
     <Component class="javax.swing.JLabel" name="lblDefeito">
       <Properties>

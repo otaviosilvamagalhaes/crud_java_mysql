@@ -1,5 +1,4 @@
 package br.com.loja.telas;
-
 import java.sql.*;
 import br.com.loja.dal.ModuloConexao;
 import javax.swing.JOptionPane;
