@@ -18,14 +18,12 @@ public class TelaOS extends javax.swing.JInternalFrame {
     }
     
     private void pesquisar_clientes(){
-        
-        String sql = "SELECT idcli as id, nomecli as nome, fonecli as Fone FROM clientes WHERE nomecli LIKE ?";
+        String sql = "SELECT idcli as id, nomecli as nome, fonecli as fone FROM clientes WHERE nomecli LIKE ?";
         try {
             pst = conexao.prepareStatement(sql);
             pst.setString(1, txtCliPesquisar.getText() + "%");
             rs = pst.executeQuery();
             tblClientes.setModel(DbUtils.resultSetToTableModel(rs));
-            
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
@@ -37,7 +35,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
     }
     
     private void emitir_os() {
-        String sql = "INERT INTO ordem_servico(tipo, situacao, equipamento, defeito, tecnico, valor, servico,"
+        String sql = "INSERT INTO ordem_servico(tipo,situacao,equipamento,defeito,tecnico,valor,servico,"
                 + "idcli) VALUES(?,?,?,?,?,?,?,?)";
         try {
             pst = conexao.prepareStatement(sql);
@@ -45,18 +43,16 @@ public class TelaOS extends javax.swing.JInternalFrame {
             pst.setString(2, cboSituacao.getSelectedItem().toString());
             pst.setString(3, txtOsEquipamento.getText());
             pst.setString(4, txtOsDef.getText());
-            pst.setString(5, txtOsServ.getText());
-            pst.setString(6, txtOsTec.getText());
-            pst.setString(7, txtOsValor.getText());
+            pst.setString(5, txtOsTec.getText());
+            pst.setString(6, txtOsValor.getText());
+            pst.setString(7, txtOsServ.getText());
             pst.setString(8, txtIdCli.getText());
-            
             if(txtIdCli.getText().isEmpty() || txtOsEquipamento.getText().isEmpty() || txtOsDef.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatórios!");
             } else {
                 int adicionado = pst.executeUpdate();
-                if (adicionado>0){
+                if (adicionado>1){
                     JOptionPane.showMessageDialog(null, "Ordem de Serviço emitida com sucesso!");
-                    
                     txtIdCli.setText(null);
                     txtOsEquipamento.setText(null);
                     txtOsDef.setText(null);
@@ -64,17 +60,52 @@ public class TelaOS extends javax.swing.JInternalFrame {
                     txtOsValor.setText(null);
                 }
             }
-            
         } catch(Exception e ){
             JOptionPane.showMessageDialog(null, e);
         }
     }
-
+    
+    private void pesquisar_os(){
+        String num_os = JOptionPane.showInputDialog("Número da OS: ");        
+        String sql = "SELECT * FROM ordem_servico WHERE os = " + num_os;
+        try {
+            pst = conexao.prepareStatement(sql);
+            rs = pst.executeQuery();
+            if (rs.next()){
+                txtOs.setText(rs.getString(1));
+                txtData.setText(rs.getString(2));
+                String radio_tipo = rs.getString(3);
+                if (radio_tipo.equals("OS")) {
+                    rbtOs.setSelected(true);
+                    tipo = "OS";
+                } else {
+                    rbtOrc.setSelected(true);
+                    tipo = "Orçamento";
+                }
+                cboSituacao.setSelectedItem(rs.getString(4));
+                txtOsEquipamento.setText(rs.getString(5));
+                txtOsDef.setText(rs.getString(6));
+                txtOsTec.setText(rs.getString(7));
+                txtOsValor.setText(rs.getString(8));
+                txtOsServ.setText(rs.getString(9));
+                txtIdCli.setText(rs.getString(10));
+                btnOsAdicionar.setEnabled(false);
+                txtCliPesquisar.setEnabled(false);
+                tblClientes.setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(null, "OS não cadastrada!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         selecao_orcamento_servico = new javax.swing.ButtonGroup();
+        jTextField1 = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         lblOS = new javax.swing.JLabel();
         lblData = new javax.swing.JLabel();
@@ -88,9 +119,9 @@ public class TelaOS extends javax.swing.JInternalFrame {
         txtCliPesquisar = new javax.swing.JTextField();
         lblId = new javax.swing.JLabel();
         txtIdCli = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblClientes = new javax.swing.JTable();
         iconSearch = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblClientes = new javax.swing.JTable();
         lblEquipamento = new javax.swing.JLabel();
         txtOsEquipamento = new javax.swing.JTextField();
         lblDefeito = new javax.swing.JLabel();
@@ -106,6 +137,8 @@ public class TelaOS extends javax.swing.JInternalFrame {
         btnOsAlterar = new javax.swing.JButton();
         btnOsApagar = new javax.swing.JButton();
         btnOsImprimir = new javax.swing.JButton();
+
+        jTextField1.setText("jTextField1");
 
         setClosable(true);
         setIconifiable(true);
@@ -136,6 +169,10 @@ public class TelaOS extends javax.swing.JInternalFrame {
 
         lblData.setText("Data");
 
+        txtOs.setEditable(false);
+
+        txtData.setEditable(false);
+
         selecao_orcamento_servico.add(rbtOrc);
         rbtOrc.setText("Orçamento");
         rbtOrc.addActionListener(new java.awt.event.ActionListener() {
@@ -160,18 +197,18 @@ public class TelaOS extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(rbtOrc)
-                        .addGap(18, 18, 18)
-                        .addComponent(rbtOs))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblOS)
                             .addComponent(txtOs, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(42, 42, 42)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblData)
-                            .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(26, Short.MAX_VALUE))
+                            .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblData)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(rbtOrc)
+                        .addGap(18, 18, 18)
+                        .addComponent(rbtOs)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -210,6 +247,8 @@ public class TelaOS extends javax.swing.JInternalFrame {
 
         lblId.setText("ID");
 
+        iconSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/loja/icones/search.png"))); // NOI18N
+
         tblClientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
@@ -218,7 +257,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
                 {null, null, null}
             },
             new String [] {
-                "ID", "Nome", "Telefone"
+                "Id", "Nome", "Fone"
             }
         ));
         tblClientes.setEnabled(false);
@@ -227,27 +266,26 @@ public class TelaOS extends javax.swing.JInternalFrame {
                 tblClientesMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tblClientes);
-
-        iconSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/loja/icones/search.png"))); // NOI18N
+        jScrollPane2.setViewportView(tblClientes);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txtCliPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(52, 52, 52)
                 .addComponent(iconSearch)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblId)
                 .addGap(18, 18, 18)
                 .addComponent(txtIdCli, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(47, 47, 47))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -261,9 +299,8 @@ public class TelaOS extends javax.swing.JInternalFrame {
                                 .addComponent(txtIdCli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(txtCliPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(iconSearch))
-                .addGap(30, 30, 30)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
         );
 
         lblEquipamento.setText("*Equipamento");
@@ -279,6 +316,11 @@ public class TelaOS extends javax.swing.JInternalFrame {
         btnOsAdicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/loja/icones/create.png"))); // NOI18N
 
         btnOsPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/loja/icones/read.png"))); // NOI18N
+        btnOsPesquisar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOsPesquisarActionPerformed(evt);
+            }
+        });
 
         btnOsAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/loja/icones/update.png"))); // NOI18N
 
@@ -293,58 +335,58 @@ public class TelaOS extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblEquipamento)
+                    .addComponent(lblDefeito)
+                    .addComponent(lblServico)
+                    .addComponent(lblTecnico))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(20, 20, 20)
-                                .addComponent(lblSituacao)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cboSituacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnOsAdicionar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblEquipamento)
-                            .addComponent(lblDefeito)
-                            .addComponent(lblServico)
-                            .addComponent(lblTecnico))
+                        .addComponent(btnOsPesquisar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnOsAdicionar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnOsPesquisar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnOsAlterar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnOsApagar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnOsImprimir))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txtOsEquipamento)
-                                .addComponent(txtOsDef)
-                                .addComponent(txtOsServ)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(txtOsTec, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(lblValorTotal)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txtOsValor, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                        .addComponent(btnOsAlterar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnOsApagar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnOsImprimir))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(txtOsEquipamento)
+                        .addComponent(txtOsDef)
+                        .addComponent(txtOsServ)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(txtOsTec, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(lblValorTotal)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtOsValor, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(32, 32, 32))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(lblSituacao)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cboSituacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblSituacao)
-                            .addComponent(cboSituacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(16, 16, 16)
+                            .addComponent(cboSituacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblEquipamento)
                     .addComponent(txtOsEquipamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -369,8 +411,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
                     .addComponent(btnOsPesquisar)
                     .addComponent(btnOsAlterar)
                     .addComponent(btnOsApagar)
-                    .addComponent(btnOsImprimir, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(0, 12, Short.MAX_VALUE))
+                    .addComponent(btnOsImprimir, javax.swing.GroupLayout.Alignment.TRAILING)))
         );
 
         pack();
@@ -393,13 +434,17 @@ public class TelaOS extends javax.swing.JInternalFrame {
         pesquisar_clientes();
     }//GEN-LAST:event_txtCliPesquisarKeyReleased
 
-    private void tblClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientesMouseClicked
-        setar_campos();
-    }//GEN-LAST:event_tblClientesMouseClicked
-
     private void rbtOsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtOsActionPerformed
         tipo = "OS";
     }//GEN-LAST:event_rbtOsActionPerformed
+
+    private void btnOsPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOsPesquisarActionPerformed
+        pesquisar_os();
+    }//GEN-LAST:event_btnOsPesquisarActionPerformed
+
+    private void tblClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientesMouseClicked
+        setar_campos();
+    }//GEN-LAST:event_tblClientesMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -412,7 +457,8 @@ public class TelaOS extends javax.swing.JInternalFrame {
     private javax.swing.JLabel iconSearch;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel lblData;
     private javax.swing.JLabel lblDefeito;
     private javax.swing.JLabel lblEquipamento;
