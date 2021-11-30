@@ -100,6 +100,46 @@ public class TelaOS extends javax.swing.JInternalFrame {
         }
     }
     
+    private void alterar(){
+        String sql = "UPDATE ordem_servico SET tipo=?, situacao=?, equipamento=?,"
+                + "defeito=?, tecnico=?, valor=?, servico=? WHERE os=?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, tipo);
+            pst.setString(2, cboSituacao.getSelectedItem().toString());
+            pst.setString(3, txtOsEquipamento.getText());
+            pst.setString(4, txtOsDef.getText());
+            pst.setString(5, txtOsTec.getText());
+            pst.setString(6, txtOsValor.getText());
+            pst.setString(7, txtOsServ.getText());
+            pst.setString(8, txtOs.getText());
+            
+            if(txtIdCli.getText().isEmpty() || txtOsEquipamento.getText().isEmpty() ||
+                    txtOsDef.getText().isEmpty()){
+                JOptionPane.showMessageDialog(null,"Preencha todos os campos obrigatórios");                
+            } else {
+                int adicionado = pst.executeUpdate();
+                if (adicionado>0){
+                    JOptionPane.showMessageDialog(null, "Ordem de Serviço alterada com sucesso!");
+                    
+                    txtOs.setText(null);
+                    txtData.setText(null);
+                    txtIdCli.setText(null);
+                    txtOsEquipamento.setText(null);
+                    txtOsDef.setText(null);
+                    txtOsTec.setText(null);
+                    txtOsValor.setText(null);
+                    txtOsServ.setText(null);
+                    btnOsAdicionar.setEnabled(true);
+                    txtCliPesquisar.setEnabled(true);
+                    tblClientes.setEnabled(true);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -260,7 +300,6 @@ public class TelaOS extends javax.swing.JInternalFrame {
                 "Id", "Nome", "Fone"
             }
         ));
-        tblClientes.setEnabled(false);
         tblClientes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblClientesMouseClicked(evt);
@@ -323,6 +362,11 @@ public class TelaOS extends javax.swing.JInternalFrame {
         });
 
         btnOsAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/loja/icones/update.png"))); // NOI18N
+        btnOsAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOsAlterarActionPerformed(evt);
+            }
+        });
 
         btnOsApagar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/loja/icones/delete.png"))); // NOI18N
 
@@ -411,7 +455,8 @@ public class TelaOS extends javax.swing.JInternalFrame {
                     .addComponent(btnOsPesquisar)
                     .addComponent(btnOsAlterar)
                     .addComponent(btnOsApagar)
-                    .addComponent(btnOsImprimir, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addComponent(btnOsImprimir, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         pack();
@@ -445,6 +490,10 @@ public class TelaOS extends javax.swing.JInternalFrame {
     private void tblClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientesMouseClicked
         setar_campos();
     }//GEN-LAST:event_tblClientesMouseClicked
+
+    private void btnOsAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOsAlterarActionPerformed
+        alterar();
+    }//GEN-LAST:event_btnOsAlterarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
